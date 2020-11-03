@@ -5,6 +5,7 @@ using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Mutagen.Bethesda.FormKeys.SkyrimSE;
 
 namespace SpellAbsorbFix
 {
@@ -28,11 +29,9 @@ namespace SpellAbsorbFix
 
         public static void RunPatch(SynthesisState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            FormKey magInvSummonKey = new FormKey("Skyrim.esm", 0x0a6459);
-
             foreach (var spell in state.LoadOrder.PriorityOrder.WinningOverrides<ISpellGetter>())
             {
-                if (!spell.MenuDisplayObject.FormKey.Equals(magInvSummonKey)) continue;
+                if (!spell.MenuDisplayObject.FormKey.Equals(Skyrim.Static.MAGINVSummon)) continue;
 
                 if (spell.Flags.HasFlag(SpellDataFlag.NoAbsorbOrReflect)) continue;
 
