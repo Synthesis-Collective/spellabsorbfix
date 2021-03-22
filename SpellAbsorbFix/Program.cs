@@ -6,32 +6,25 @@ using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Mutagen.Bethesda.FormKeys.SkyrimSE;
+using System.Threading.Tasks;
 
 namespace SpellAbsorbFix
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static Task<int> Main(string[] args)
         {
-            return SynthesisPipeline.Instance.Patch<ISkyrimMod, ISkyrimModGetter>(
-                args: args,
-                patcher: RunPatch,
-                new UserPreferences()
-                {
-                    ActionsForEmptyArgs = new RunDefaultPatcher()
-                    {
-                        IdentifyingModKey = "SpellAbsorbFix.esp",
-                        TargetRelease = GameRelease.SkyrimSE
-                    }
-                }
-            );
+            return SynthesisPipeline.Instance
+                .SetTypicalOpen(GameRelease.SkyrimSE, "SpellAbsorbFix.esp")
+                .AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
+                .Run(args);
         }
 
-        public static void RunPatch(SynthesisState<ISkyrimMod, ISkyrimModGetter> state)
+        public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            foreach (var spell in state.LoadOrder.PriorityOrder.WinningOverrides<ISpellGetter>())
+            foreach (var spell in state.LoadOrder.PriorityOrder.Spell().WinningOverrides())
             {
-                if (!spell.MenuDisplayObject.FormKey.Equals(Skyrim.Static.MAGINVSummon)) continue;
+                if (!spell.MenuDisplayObject.Equals(Skyrim.Static.MAGINVSummon)) continue;
 
                 if (spell.Flags.HasFlag(SpellDataFlag.NoAbsorbOrReflect)) continue;
 

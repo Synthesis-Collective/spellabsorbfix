@@ -1,6 +1,8 @@
 {
   "Nickname": "SpellAbsorbFix",
-  "HideByDefault": false,
+  "Visibility": "Visible",
   "OneLineDescription": "",
-  "LongDescription": ""
+  "LongDescription": "",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": []
 }
